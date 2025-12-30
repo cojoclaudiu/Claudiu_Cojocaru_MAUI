@@ -1,5 +1,7 @@
-namespace ClaudiuCojocaruLab7.Models;
 using SQLite;
+using SQLiteNetExtensions.Attributes;
+
+namespace ClaudiuCojocaruLab7.Models;
 
 public class ShopList
 {
@@ -8,4 +10,6 @@ public class ShopList
     [MaxLength(250), Unique]
     public string Description { get; set; }
     public DateTime Date { get; set; }
+    [ForeignKey(typeof(Shop))]
+    public int ShopID { get; set; }
 }

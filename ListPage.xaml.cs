@@ -18,14 +18,17 @@ public partial class ListPage : ContentPage
 
     async void OnSaveButtonClicked(object sender, EventArgs e)
     {
-        if (BindingContext is not ShopList slist)
-            return;
+        var slist = (ShopList)BindingContext;
+
+        if (ShopPicker.SelectedItem is Shop selectedShop)
+            slist.ShopID = selectedShop.ID;
 
         slist.Date = DateTime.UtcNow;
         await App.Database.SaveShopListAsync(slist);
 
-        await Shell.Current.GoToAsync("..");
+        await Navigation.PopAsync();
     }
+
 
     async void OnDeleteButtonClicked(object sender, EventArgs e)
     {
@@ -52,7 +55,13 @@ public partial class ListPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+
+        var shops = await App.Database.GetShopsAsync();
+        ShopPicker.ItemsSource = shops;
+        ShopPicker.ItemDisplayBinding = new Binding("ShopDetails");
+
         var shopl = (ShopList)BindingContext;
         listView.ItemsSource = await App.Database.GetListProductsAsync(shopl.ID);
     }
+
 }
