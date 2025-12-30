@@ -34,4 +34,25 @@ public partial class ListPage : ContentPage
 
         await Shell.Current.GoToAsync("..");
     }
+    async void OnChooseButtonClicked(object sender, EventArgs e)
+    {
+        if (BindingContext is not ShopList sl)
+            return;
+
+        if (sl.ID == 0)
+        {
+            sl.Date = DateTime.UtcNow;
+            await App.Database.SaveShopListAsync(sl);
+        }
+
+        await Navigation.PushAsync(new ProductPage(sl));
+    }
+
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        var shopl = (ShopList)BindingContext;
+        listView.ItemsSource = await App.Database.GetListProductsAsync(shopl.ID);
+    }
 }
